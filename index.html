@@ -23,7 +23,7 @@ header h1{font-family:var(--f-num);font-weight:700;font-size:26px;letter-spacing
 .cont small{font-size:16px;color:var(--muted)}
 .barra{height:8px;background:var(--chip);border-radius:6px;overflow:hidden}
 .barra i{display:block;height:100%;width:0;background:var(--ok-bg);transition:width .3s}
-.abas{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--chip);padding:4px;border-radius:12px}
+.abas{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;background:var(--chip);padding:4px;border-radius:12px}
 .abas button{border:0;background:transparent;color:var(--fg);font:600 14px var(--f-ui);padding:10px 4px;border-radius:9px;cursor:pointer}
 .abas button[aria-selected="true"]{background:var(--accent);color:var(--on-accent)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
@@ -46,7 +46,6 @@ button.b{font:600 15px var(--f-ui);padding:12px;border-radius:12px;border:1px so
 button.b.pri{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .res.err .rot,.res.ok .rot,.res.dup .rot{opacity:.8}
 button.b.perigo{color:var(--err-bg)}
-button.b.perigo{color:var(--err)}
 button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 input[type=text],input[type=search]{width:100%;font:500 16px var(--f-ui);padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--fg)}
 label.l{font-size:13px;color:var(--muted);font-weight:500}
@@ -85,7 +84,6 @@ label.l{font-size:13px;color:var(--muted);font-weight:500}
   <nav class="abas" role="tablist">
     <button id="tab-bipar" role="tab" aria-selected="true" data-v="bipar">Bipar</button>
     <button id="tab-faltam" role="tab" aria-selected="false" data-v="faltam">Faltam <span id="nFaltam">0</span></button>
-    <button id="tab-rota" role="tab" aria-selected="false" data-v="rota">Rota</button>
   </nav>
 
   <section id="v-bipar" class="card">
@@ -132,9 +130,9 @@ label.l{font-size:13px;color:var(--muted);font-weight:500}
     <div class="lista" id="lista"></div>
   </section>
 
-  <section id="v-rota" class="card" hidden>
+  <section id="v-rota" class="card">
     <div>
-      <label class="l" for="pdf">PDF exportado do Spoke/Circuit</label>
+      <label class="l" for="pdf">Rota do dia: PDF exportado do Spoke/Circuit</label>
       <input type="file" id="pdf" accept="application/pdf,.pdf">
     </div>
     <div class="aviso" id="pdfInfo">Suba o PDF da rota do dia. A coluna # vira o número que aparece quando você bipa.</div>
@@ -142,8 +140,8 @@ label.l{font-size:13px;color:var(--muted);font-weight:500}
     <div class="row">
       <button class="b perigo" id="btnZerar">Zerar bipagem</button>
     </div>
-    <div class="aviso">Terminou de bipar? Toque em "Copiar contagem" e cole no chat do Claude: ele atualiza o Painel do Entregador com os bipados.</div>
     <button class="b pri" id="btnCopiar">Copiar contagem</button>
+    <div class="aviso">Terminou de bipar? Copie a contagem e cole no chat do Claude: ele atualiza o Painel do Entregador.</div>
     <input type="text" id="txtCont" readonly hidden>
   </section>
 </div>
@@ -293,7 +291,7 @@ function naParada(p) {
 function processar(txt, origem) {
   const cod = codigoLido(txt);
   if (!cod) return;
-  if (!S.rota) { mostrar('err', 'Sem rota', 'Sem rota', cod, 'Suba o PDF do Spoke na aba Rota.'); bipe('err'); falar('suba a rota'); return; }
+  if (!S.rota) { mostrar('err', 'Sem rota', 'Sem rota', cod, 'Suba o PDF do Spoke em "Rota do dia", na aba Bipar.'); bipe('err'); falar('suba a rota'); return; }
   const p = mapa.get(cod);
   if (!p) { mostrar('err', 'Atenção', 'Pacote não encontrado', cod, 'Esse código não está na rota. Separe o pacote.'); bipe('err'); falar('pacote não encontrado'); return; }
   const id = idDe(p);
@@ -422,7 +420,8 @@ document.addEventListener('visibilitychange', async () => { if (document.visibil
 
 /* ---------- abas ---------- */
 function aba(v) {
-  ['bipar', 'faltam', 'rota'].forEach(n => { $('v-' + n).hidden = n !== v; $('tab-' + n).setAttribute('aria-selected', n === v); });
+  ['bipar', 'faltam'].forEach(n => { $('v-' + n).hidden = n !== v; $('tab-' + n).setAttribute('aria-selected', n === v); });
+  $('v-rota').hidden = v !== 'bipar';
   if (v === 'faltam') { lista(); setTimeout(() => $('busca').focus(), 50); }
   if (v === 'bipar') setTimeout(() => cod.focus({ preventScroll: true }), 50);
 }
@@ -431,7 +430,7 @@ document.querySelectorAll('.abas button').forEach(b => b.onclick = () => aba(b.d
 /* ---------- faltam + busca ---------- */
 function lista() {
   const L = $('lista'); L.textContent = '';
-  if (!S.rota) { L.innerHTML = '<div class="vazio">Suba o PDF da rota na aba Rota.</div>'; $('buscaInfo').textContent = ''; return; }
+  if (!S.rota) { L.innerHTML = '<div class="vazio">Suba o PDF da rota na aba Bipar.</div>'; $('buscaInfo').textContent = ''; return; }
   const q = norm($('busca').value);
   let ps = S.rota.pacotes;
   if (q) ps = ps.filter(p => norm(p.seq + ' ' + (p.cod || '') + ' ' + p.end + ' ' + p.nota).includes(q) || String(p.seq) === $('busca').value.trim());
@@ -511,9 +510,9 @@ function render() {
   $('barra').style.width = tot ? (n / tot * 100) + '%' : '0';
   $('nFaltam').textContent = tot - n;
   $('rotaNome').textContent = S.rota ? S.rota.nome : 'Nenhuma rota carregada';
+  $('v-rota').style.order = S.rota ? '' : '-1';   // sem rota: o PDF aparece primeiro
   $('rotaResumo').textContent = S.rota ? 'Rota atual: ' + S.rota.nome + ' · ' + tot + ' pacotes · ' + n + ' bipados' : '';
   if (!$('v-faltam').hidden) lista();
 }
 indexar(); pintaVel(); render();
-if (!S.rota) aba('rota');
 </script>
