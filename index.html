@@ -249,13 +249,20 @@ let ac = null;
 function bipe(tipo) {
   try {
     ac = ac || new (window.AudioContext || window.webkitAudioContext)();
-    const notas = tipo === 'ok' ? [[1320, 0, .09]] : tipo === 'dup' ? [[880, 0, .1], [880, .16, .1]] : [[260, 0, .32]];
-    notas.forEach(([f, t, d]) => {
+    if (ac.state === 'suspended') ac.resume();
+    // sons escolhidos pelo Bruno (26/11): certo = Sino 4, repetido = Clássico, não encontrado = Plim
+    const SONS = {
+      ok: [[2093, 0, .5, 'sine', .3], [5777, 0, .18, 'sine', .06], [11302, 0, .07, 'sine', .03]],
+      dup: [[880, 0, .1, 'square', .22], [880, .16, .1, 'square', .22]],
+      err: [[220, 0, .12, 'triangle', .45], [220, .16, .12, 'triangle', .45], [220, .32, .12, 'triangle', .45]]
+    };
+    const t0 = ac.currentTime + .01;
+    SONS[tipo].forEach(([f, t, d, onda, vol]) => {
       const o = ac.createOscillator(), g = ac.createGain();
-      o.type = tipo === 'err' ? 'sawtooth' : 'square'; o.frequency.value = f;
-      g.gain.setValueAtTime(.0001, ac.currentTime + t); g.gain.exponentialRampToValueAtTime(.25, ac.currentTime + t + .01);
-      g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + t + d);
-      o.connect(g).connect(ac.destination); o.start(ac.currentTime + t); o.stop(ac.currentTime + t + d + .02);
+      o.type = onda; o.frequency.setValueAtTime(f, t0 + t);
+      g.gain.setValueAtTime(.0001, t0 + t); g.gain.exponentialRampToValueAtTime(vol, t0 + t + .01);
+      g.gain.exponentialRampToValueAtTime(.0001, t0 + t + d);
+      o.connect(g).connect(ac.destination); o.start(t0 + t); o.stop(t0 + t + d + .03);
     });
   } catch (e) {}
   try { navigator.vibrate && navigator.vibrate(tipo === 'ok' ? 60 : tipo === 'dup' ? [60, 80, 60] : 300); } catch (e) {}
