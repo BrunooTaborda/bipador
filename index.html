@@ -13,6 +13,522 @@
   color-scheme:light;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important} /* 26/11: .tela{display:flex} vencia o hidden e as telas apareciam juntas */
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:15px;margin:0}
+.tela{max-width:560px;margin:0 auto;min-height:100%;padding-block:12px 16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:10px}
+.topo{display:flex;align-items:center;gap:10px;min-height:40px}
+.topo h1{font-size:20px;font-weight:700;margin:0}
+.cnt{font-family:var(--f-num);font-weight:700;font-size:30px;font-variant-numeric:tabular-nums;line-height:1}
+.cnt small{font-size:18px;color:var(--muted);font-weight:600}
+.falt{color:var(--muted);font-size:14px}
+.ico{margin-left:auto;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--fg);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ico svg{width:22px;height:22px}
+.voltar{border:0;background:transparent;color:var(--fg);font-size:26px;line-height:1;padding:4px 8px 4px 0;cursor:pointer}
+.barra{height:8px;background:var(--line);border-radius:6px;overflow:hidden}
+.barra i{display:block;height:100%;width:0;background:var(--acc);transition:width .3s}
+.cam{position:relative;height:min(30vh,240px);border-radius:16px;overflow:hidden;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mira{position:absolute;inset:20% 14%;border:3px solid var(--acc);border-radius:12px;pointer-events:none;box-shadow:0 0 0 999px rgba(0,0,0,.18)}
+.live{position:absolute;left:10px;top:10px;font-size:12px;font-weight:700;background:var(--acc);color:var(--on-acc);padding:3px 10px;border-radius:999px}
+.camtxt{color:var(--muted);font-size:14px;text-align:center;padding:16px;max-width:300px}
+.camtxt button{margin-top:10px}
+.res{flex:1 1 auto;min-height:210px;border-radius:20px;padding:12px;text-align:center;background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px}
+.res .rot{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.res .num{font-family:var(--f-num);font-weight:700;font-size:clamp(96px,30vw,150px);line-height:.9;font-variant-numeric:tabular-nums}
+.res .cod{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;overflow-wrap:anywhere}
+.res .msg{font-size:15px;font-weight:700}
+.res .end{font-size:14px;overflow-wrap:anywhere;opacity:.9}
+.res.ok{background:var(--ok);color:var(--on-ok);border-color:var(--ok)}
+.res.dup{background:var(--dup);color:var(--on-dup);border-color:var(--dup)}
+.res.err{background:var(--err);color:var(--on-err);border-color:var(--err)}
+.res.err .num{font-size:44px;line-height:1.05}
+.res.vazio{color:var(--muted)}
+.hist{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.hist div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px 4px;text-align:center;font-size:12px;color:var(--muted);border-bottom-width:4px}
+.hist div b{display:block;font-family:var(--f-num);font-size:24px;color:var(--fg);line-height:1.1}
+.hist div.ok{border-bottom-color:var(--ok)} .hist div.dup{border-bottom-color:var(--dup)} .hist div.err{border-bottom-color:var(--err)}
+.doca{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.b{font:700 16px var(--f-ui);padding:15px 10px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer;width:100%}
+.b.pri{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.b.perigo{color:var(--err);background:transparent;border:0}
+.b:active{transform:scale(.98)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+input[type=text],input[type=search]{width:100%;font:500 17px var(--f-ui);padding:13px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--fg)}
+.digitar{display:flex;gap:8px}
+.digitar input{flex:1;min-width:0}
+.digitar button{flex:0 0 auto;width:auto;padding:0 18px}
+.inicio{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;text-align:center}
+.inicio .doc{width:72px;height:88px;margin:0 auto;border-radius:10px;background:var(--panel);border:2px solid var(--line);position:relative}
+.inicio .doc:before,.inicio .doc:after{content:"";position:absolute;left:14px;right:14px;height:4px;border-radius:2px;background:var(--line);top:28px;box-shadow:0 12px 0 var(--line),0 24px 0 var(--line)}
+.inicio .doc:after{top:auto;bottom:-14px;left:auto;right:-14px;width:34px;height:34px;border-radius:50%;background:var(--acc);box-shadow:none}
+.inicio h2{font-size:22px;margin:0}
+.aviso{color:var(--muted);font-size:14px;line-height:1.45}
+.aviso.forte{color:var(--err);font-weight:600}
+.chips{display:flex;gap:6px}
+.chips button{font:600 13px var(--f-ui);padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.lista{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:0 12px}
+.item{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.item .s{font-family:var(--f-num);font-weight:700;font-size:30px;text-align:center;font-variant-numeric:tabular-nums}
+.item .t{min-width:0;font-size:14px;overflow-wrap:anywhere}
+.item .t small{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--muted)}
+.item button{font:700 14px var(--f-ui);padding:11px 12px;border-radius:11px;border:0;background:var(--ok);color:var(--on-ok);cursor:pointer}
+.item.feito .s,.item.feito .t{opacity:.5}
+.item.feito button{background:var(--bg);color:var(--fg);border:1px solid var(--line)}
+.vazia{color:var(--muted);text-align:center;padding:20px 4px}
+.ajuste{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:0 14px}
+.lin{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 0;border-top:1px solid var(--line);font-size:15px;width:100%;background:none;border-left:0;border-right:0;border-bottom:0;color:var(--fg);font-family:var(--f-ui);text-align:left;cursor:pointer}
+.lin:first-child{border-top:0}
+.lin .seta{color:var(--muted);font-size:20px}
+.sw{width:48px;height:28px;border-radius:999px;background:var(--line);position:relative;flex:0 0 auto;transition:background .2s}
+.sw:after{content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:left .2s}
+.sw.on{background:var(--acc)} .sw.on:after{left:23px}
+.vel{display:flex;flex-direction:column;gap:8px;padding:14px 0;border-top:1px solid var(--line)}
+.vel div{display:flex;justify-content:space-between}
+.vel output{font-family:var(--f-num);font-weight:700;font-size:20px}
+.vel input{width:100%;accent-color:var(--acc)}
+.cresce{flex:1}
+@media (prefers-reduced-motion:reduce){.barra i,.sw,.sw:after{transition:none}.b:active{transform:none}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<!-- ÍCONE engrenagem reutilizado -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="eng" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol></svg>
+<input type="file" id="pdf" accept="application/pdf,.pdf" hidden>
+<input type="file" id="foto" accept="image/*" capture="environment" hidden>
+
+<section class="tela" id="t-inicio">
+  <div class="topo"><h1>Bipador</h1><button class="ico" data-ir="ajustes" aria-label="Ajustes"><svg><use href="#eng"/></svg></button></div>
+  <div class="inicio">
+    <div class="doc" aria-hidden="true"></div>
+    <h2>Carregue a rota do dia</h2>
+    <p class="aviso" style="margin:0">Exporte o PDF no Spoke e escolha aqui. A coluna # vira o número de cada pacote.</p>
+    <button class="b pri" id="btnPdf">Escolher PDF do Spoke</button>
+    <div class="aviso" id="pdfInfo"></div>
+    <button class="b" id="btnContinuar" hidden></button>
+  </div>
+</section>
+
+<section class="tela" id="t-bipar" hidden>
+  <div class="topo"><span class="cnt" id="cont">0<small> / 0</small></span><span class="falt" id="faltTop"></span><button class="ico" data-ir="ajustes" aria-label="Ajustes"><svg><use href="#eng"/></svg></button></div>
+  <div class="barra" aria-hidden="true"><i id="barra"></i></div>
+  <div class="cam" id="cam">
+    <video id="video" playsinline muted hidden></video>
+    <div class="mira" id="mira" hidden></div>
+    <span class="live" id="live" hidden>LENDO</span>
+    <div class="camtxt" id="camTxt">Câmera desligada.<br><button class="b pri" id="btnCam" style="width:auto;padding:10px 18px">Ligar câmera</button></div>
+  </div>
+  <div id="res" class="res vazio" aria-live="polite">
+    <div class="rot" id="rRot">Sequência</div>
+    <div class="num" id="rNum">–</div>
+    <div class="cod" id="rCod">Aponte para a etiqueta</div>
+    <div class="msg" id="rMsg"></div>
+    <div class="end" id="rEnd"></div>
+  </div>
+  <div class="hist" id="hist" aria-label="Últimos bipados"></div>
+  <div class="digitar" id="digitar" hidden>
+    <input type="text" id="cod" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="AJ261113115402201" aria-label="Código do pacote">
+    <button class="b pri" id="btnOk">OK</button>
+  </div>
+  <div class="doca">
+    <button class="b" data-ir="faltam" id="btnFaltam">Faltam 0</button>
+    <button class="b pri" id="btnDigitar">Digitar código</button>
+  </div>
+</section>
+
+<section class="tela" id="t-faltam" hidden>
+  <div class="topo"><button class="voltar" data-ir="bipar" aria-label="Voltar">←</button><h1 id="faltTit">Faltam</h1><button class="ico" data-ir="ajustes" aria-label="Ajustes"><svg><use href="#eng"/></svg></button></div>
+  <input type="search" id="busca" autocomplete="off" spellcheck="false" placeholder="Buscar rua, código ou nº" aria-label="Buscar pacote">
+  <div class="chips" role="group" aria-label="Filtro">
+    <button data-f="faltam" aria-pressed="true">Faltam</button><button data-f="bipados" aria-pressed="false">Bipados</button><button data-f="todos" aria-pressed="false">Todos</button>
+  </div>
+  <div class="lista" id="lista"></div>
+  <button class="b pri" id="btnCopiar2">Copiar contagem pro Hub</button>
+  <input type="text" id="txtCont2" readonly hidden aria-label="Contagem">
+</section>
+
+<section class="tela" id="t-ajustes" hidden>
+  <div class="topo"><button class="voltar" id="ajVoltar" aria-label="Voltar">←</button><h1>Ajustes</h1></div>
+  <div class="ajuste">
+    <button class="lin" id="swVoz"><span>Falar o número</span><span class="sw on" id="swVozI"></span></button>
+    <div class="vel"><div><label for="vel">Velocidade da voz</label><output id="velOut" for="vel">1,45x</output></div><input type="range" id="vel" min="1" max="2" step="0.05" value="1.45"></div>
+    <button class="lin" id="ajFoto"><span>Ler por foto (sem câmera)</span><span class="seta">›</span></button>
+    <button class="lin" id="ajRota"><span>Trocar rota (PDF)</span><span class="seta">›</span></button>
+  </div>
+  <div class="aviso" id="rotaResumo"></div>
+  <div class="cresce"></div>
+  <button class="b pri" id="btnCopiar">Copiar contagem pro Hub</button>
+  <input type="text" id="txtCont" readonly hidden aria-label="Contagem">
+  <div class="aviso" style="text-align:center">Cole no chat do Claude: ele atualiza o Painel do Entregador.</div>
+  <button class="b perigo" id="btnZerar">Zerar bipagem</button>
+</section>
+<script>
+try{pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"}catch(e){}
+/* PARSER_START */
+const COD_RE = /(CN[A-Z]{0,2}\d{9,14}|AJ\d{15}|BR\d{10,14}[A-Z]?)/g;
+function rotaDoPdf(paginas) {
+  // paginas: [[{s,x,y,h}]], y cresce para cima (coordenadas do PDF)
+  let numMax = null; const linhas = [];
+  for (const pg of paginas) {
+    const it = pg.filter(i => i.s && i.s.trim());
+    const hd = it.find(i => i.s.trim() === '#');
+    let corpo = it;
+    if (hd) { numMax = hd.x + 18; corpo = it.filter(i => i.y < hd.y - 8); }
+    if (numMax == null) continue;
+    const etas = corpo.filter(i => /^\d{1,2}:\d{2}$/.test(i.s.trim()));
+    const etaX = etas.length ? Math.min(...etas.map(i => i.x)) : Infinity;
+    const nums = corpo.filter(i => i.x < numMax && /^\d+$/.test(i.s.trim()));
+    const txt = corpo.filter(i => i.x >= numMax && !etas.includes(i));
+    const ys = [...new Set(txt.map(i => Math.round(i.y * 2) / 2))].sort((a, b) => b - a);
+    const h = txt.length ? txt[0].h || 10 : 10;
+    const blocos = [];
+    for (const y of ys) {
+      const b = blocos[blocos.length - 1];
+      if (b && b.fim - y < h * 1.6) b.fim = y; else blocos.push({ ini: y, fim: y });
+    }
+    const dist = (n, b) => n.y > b.ini ? n.y - b.ini : n.y < b.fim ? b.fim - n.y : 0;
+    nums.forEach(n => { let m = null; for (const b of blocos) if (!m || dist(n, b) < dist(n, m)) m = b; if (m && dist(n, m) < h * 2.5) (m.ns = m.ns || []).push(n); });
+    for (const b of blocos) {
+      const ns = (b.ns || []).sort((a, c) => c.y - a.y);
+      if (!ns.length) continue;
+      const doBloco = txt.filter(i => i.y <= b.ini + 0.3 && i.y >= b.fim - 0.3);
+      const linha = (arr) => {
+        const porY = {};
+        arr.forEach(i => { const k = Math.round(i.y * 2) / 2; (porY[k] = porY[k] || []).push(i); });
+        return Object.keys(porY).sort((a, c) => c - a).map(k => porY[k].sort((a, c) => a.x - c.x)
+          .map((i, j, l) => (j && i.w != null && i.x - (l[j - 1].x + (l[j - 1].w || 0)) > 1.5 ? ' ' : '') + i.s).join('')).join(' ').replace(/\s+/g, ' ').trim();
+      };
+      const end = linha(doBloco.filter(i => i.x < etaX - 5));
+      const nota = linha(doBloco.filter(i => i.x > etaX + 30));
+      const tudo = doBloco.map(i => i.s).join('').replace(/\s+/g, '').toUpperCase();
+      linhas.push({ seq: +ns.map(n => n.s.trim()).join(''), end, nota, cods: [...new Set(tudo.match(COD_RE) || [])] });
+    }
+  }
+  const pacotes = [];
+  for (const l of linhas) {
+    if (l.cods.length) l.cods.forEach(c => pacotes.push({ seq: l.seq, cod: c, end: l.end, nota: l.nota }));
+    else pacotes.push({ seq: l.seq, cod: null, end: l.end, nota: l.nota });
+  }
+  return pacotes;
+}
+function codigoLido(txt) {
+  const t = String(txt || '').toUpperCase().replace(/\s+/g, '');
+  const m = t.match(COD_RE);
+  return m ? m[0] : t;
+}
+/* PARSER_END */
+
+const $ = id => document.getElementById(id);
+const LS = 'bipador_v1';
+let S = { rota: null, bip: {} };
+let cfg = { vel: 1.45, voz: true };
+let hist = [];                                   // últimos lidos: {seq, tipo, ts}
+try { const v = JSON.parse(localStorage.getItem(LS) || 'null'); if (v && v.rota) S = v; } catch (e) {}
+try { const c = JSON.parse(localStorage.getItem(LS + '_cfg') || 'null'); if (c) cfg = Object.assign(cfg, c); } catch (e) {}
+
+const idDe = p => p.cod || ('P' + p.seq + ':' + p.end.slice(0, 30));
+const norm = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+let mapa = new Map();
+const limpaEnd = e => String(e || '').replace(/[\uFFFD\u{1F300}-\u{1FAFF}\u2600-\u27BF]/gu, '').replace(/,\s*L\s?a\s?j\s?e\s?a\s?d\s?o\b.*$/i, '').replace(/\s+/g, ' ').trim();
+function indexar() { (S.rota ? S.rota.pacotes : []).forEach(p => { p.end = limpaEnd(p.end); }); mapa = new Map(); (S.rota ? S.rota.pacotes : []).forEach(p => { if (p.cod) mapa.set(p.cod, p); }); }
+
+/* ---------- gravação: celular + banco do claude.ai (quando existir) ---------- */
+let dbRef = null, gravando = false, pendente = false;
+function salvar() {
+  try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {}
+  pendente = true; clearTimeout(salvar.t); salvar.t = setTimeout(sync, 2000);
+}
+async function sync() {
+  if (!dbRef || gravando || !pendente) return;
+  gravando = true; pendente = false;
+  try { await dbRef.set({ rota: S.rota, bip: S.bip, total: S.rota ? S.rota.pacotes.length : 0, bipados: contar(), atualizado: new Date().toISOString() }); }
+  catch (e) { pendente = true; }
+  gravando = false;
+  if (pendente) salvar.t = setTimeout(sync, 2000);
+}
+(async () => {
+  try {
+    const db = window.claude && await claude.use('db');
+    if (!db) return;
+    dbRef = db.doc('bipagens/atual');
+    if (!S.rota) {
+      const snap = await dbRef.get(); const d = snap.exists && snap.data();
+      if (d && d.rota) { S = { rota: d.rota, bip: d.bip || {} }; try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {} indexar(); render(); }
+    }
+  } catch (e) {}
+})();
+
+/* ---------- som e voz (escolhidos pelo Bruno 26/11: certo = Sino 4, repetido = Clássico, não encontrado = Plim) ---------- */
+let ac = null;
+const SONS = {
+  ok: [[2093, 0, .5, 'sine', .3], [5777, 0, .18, 'sine', .06], [11302, 0, .07, 'sine', .03]],
+  dup: [[880, 0, .1, 'square', .22], [880, .16, .1, 'square', .22]],
+  err: [[220, 0, .12, 'triangle', .45], [220, .16, .12, 'triangle', .45], [220, .32, .12, 'triangle', .45]]
+};
+function bipe(tipo) {
+  try {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    if (ac.state === 'suspended') ac.resume();
+    const t0 = ac.currentTime + .01;
+    SONS[tipo].forEach(([f, t, d, onda, vol]) => {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = onda; o.frequency.setValueAtTime(f, t0 + t);
+      g.gain.setValueAtTime(.0001, t0 + t); g.gain.exponentialRampToValueAtTime(vol, t0 + t + .01);
+      g.gain.exponentialRampToValueAtTime(.0001, t0 + t + d);
+      o.connect(g).connect(ac.destination); o.start(t0 + t); o.stop(t0 + t + d + .03);
+    });
+  } catch (e) {}
+  try { navigator.vibrate && navigator.vibrate(tipo === 'ok' ? 60 : tipo === 'dup' ? [60, 80, 60] : 300); } catch (e) {}
+}
+function destravarSom() { try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); speechSynthesis.speak(new SpeechSynthesisUtterance('')); } catch (e) {} }
+let vozPt = null;
+function acharVoz() { try { const vs = speechSynthesis.getVoices(); vozPt = vs.find(v => /pt[-_]BR/i.test(v.lang)) || vs.find(v => /^pt/i.test(v.lang)) || null; } catch (e) {} }
+try { acharVoz(); speechSynthesis.onvoiceschanged = acharVoz; } catch (e) {}
+function falar(t) {
+  if (!cfg.voz) return;
+  try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = 'pt-BR'; u.rate = cfg.vel; if (vozPt) u.voice = vozPt; speechSynthesis.speak(u); } catch (e) {}
+}
+
+/* ---------- bipar ---------- */
+function contar() { return S.rota ? S.rota.pacotes.filter(p => S.bip[idDe(p)]).length : 0; }
+function mostrar(tipo, rot, num, cod, msg, end) {
+  $('res').className = 'res ' + tipo;
+  $('rRot').textContent = rot; $('rNum').textContent = num; $('rCod').textContent = cod; $('rMsg').textContent = msg; $('rEnd').textContent = end || '';
+}
+function naParada(p) {
+  const mesma = S.rota.pacotes.filter(q => q.seq === p.seq);
+  return mesma.length < 2 ? '' : mesma.filter(q => S.bip[idDe(q)]).length + ' de ' + mesma.length + ' nessa parada';
+}
+function anotar(seq, tipo) { hist.unshift({ seq, tipo, ts: Date.now() }); hist = hist.slice(0, 3); pintaHist(); }
+function pintaHist() {
+  const H = $('hist'); H.textContent = '';
+  for (let i = 0; i < 3; i++) {
+    const h = hist[i], d = document.createElement('div');
+    if (h) { d.className = h.tipo; const b = document.createElement('b'); b.textContent = h.seq; const s = Math.round((Date.now() - h.ts) / 1000); d.append(b, s < 3 ? 'agora' : s < 60 ? s + 's' : Math.round(s / 60) + 'min'); }
+    else { const b = document.createElement('b'); b.textContent = '–'; d.append(b, ' '); }
+    H.append(d);
+  }
+}
+setInterval(() => { if (hist.length && !$('t-bipar').hidden) pintaHist(); }, 5000);
+function processar(txt, origem) {
+  const cod = codigoLido(txt);
+  if (!cod) return;
+  if (!S.rota) { tela('inicio'); return; }
+  const p = mapa.get(cod);
+  if (!p) { mostrar('err', 'Atenção', 'Pacote não encontrado', cod, 'Não está na rota. Separe o pacote.'); bipe('err'); falar('pacote não encontrado'); anotar('?', 'err'); return; }
+  const id = idDe(p), extra = () => naParada(p) ? ' · ' + naParada(p) : '';
+  if (S.bip[id]) { mostrar('dup', 'Sequência', String(p.seq), cod + extra(), 'Pacote já bipado', p.end); bipe('dup'); falar('já bipado, ' + p.seq); anotar(p.seq, 'dup'); return; }
+  S.bip[id] = Date.now(); salvar();
+  mostrar('ok', 'Sequência', String(p.seq), cod + extra(), origem === 'manual' ? 'Confirmado na mão' : '', p.end);
+  bipe('ok'); falar(String(p.seq)); anotar(p.seq, 'ok'); render();
+  if (contar() === S.rota.pacotes.length) setTimeout(() => { mostrar('ok', 'Tudo bipado', String(contar()), 'de ' + S.rota.pacotes.length + ' pacotes', 'Copie a contagem nos Ajustes', ''); falar('tudo bipado'); }, 1600);
+}
+
+/* ---------- digitar código / leitor em modo teclado ---------- */
+const cod = $('cod');
+$('btnDigitar').onclick = () => { const d = $('digitar'); d.hidden = !d.hidden; $('btnDigitar').textContent = d.hidden ? 'Digitar código' : 'Fechar'; if (!d.hidden) cod.focus(); };
+function enviarCod() { const v = cod.value; cod.value = ''; if (v.trim()) processar(v, 'teclado'); cod.focus(); }
+$('btnOk').onclick = enviarCod;
+cod.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); enviarCod(); } });
+cod.addEventListener('input', () => {
+  clearTimeout(cod.t);
+  cod.t = setTimeout(() => { const c = codigoLido(cod.value); COD_RE.lastIndex = 0; if (c && c.length >= 12 && COD_RE.test(c)) { const v = cod.value; cod.value = ''; processar(v, 'teclado'); } COD_RE.lastIndex = 0; }, 250);
+});
+
+/* ---------- câmera contínua (Android: leitor do Chrome; iPhone: ZXing) ---------- */
+let stream = null, detector = null, laco = null, lock = null; const vistos = new Map();
+async function criarDetector() {
+  if ('BarcodeDetector' in window) {
+    try {
+      const sup = await BarcodeDetector.getSupportedFormats();
+      const quero = ['code_128', 'qr_code', 'code_39', 'code_93', 'ean_13', 'itf', 'data_matrix', 'pdf417', 'codabar'].filter(f => sup.includes(f));
+      if (quero.length) return new BarcodeDetector({ formats: quero });
+    } catch (e) {}
+  }
+  return await detectorZxing();
+}
+function carregarScript(src) { return new Promise((ok, erro) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = erro; document.head.appendChild(s); }); }
+async function detectorZxing() {
+  try {
+    if (!window.ZXing) await carregarScript('https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js');
+    const Z = window.ZXing, F = Z.BarcodeFormat, leitor = new Z.MultiFormatReader(), dicas = new Map();
+    dicas.set(Z.DecodeHintType.POSSIBLE_FORMATS, [F.CODE_128, F.QR_CODE, F.CODE_39, F.CODE_93, F.EAN_13, F.ITF, F.DATA_MATRIX, F.PDF_417, F.CODABAR]);
+    dicas.set(Z.DecodeHintType.TRY_HARDER, true); leitor.setHints(dicas);
+    const cv = document.createElement('canvas'), cx = cv.getContext('2d', { willReadFrequently: true });
+    const ler = () => { try { return [{ rawValue: leitor.decodeWithState(new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.HTMLCanvasElementLuminanceSource(cv)))).getText() }]; } catch (e) { return []; } finally { leitor.reset(); } };
+    return { async detect(src) {
+      const w = src.videoWidth || src.width, h = src.videoHeight || src.height; if (!w || !h) return [];
+      const esc = Math.min(1, 1000 / Math.max(w, h)); cv.width = Math.round(w * esc); cv.height = Math.round(h * esc);
+      cx.drawImage(src, 0, 0, cv.width, cv.height); let r = ler();
+      if (!r.length && src.videoWidth) { const cw = w * .72, ch = h * .56; cv.width = Math.round(Math.min(1000, cw)); cv.height = Math.round(cv.width * ch / cw); cx.drawImage(src, (w - cw) / 2, (h - ch) / 2, cw, ch, 0, 0, cv.width, cv.height); r = ler(); }
+      return r;
+    } };
+  } catch (e) { return null; }
+}
+function lidos(cods) {
+  const agora = Date.now();
+  for (const raw of cods) {
+    const c = codigoLido(raw), ult = vistos.get(c); vistos.set(c, agora);
+    if (ult && agora - ult < 2500) continue;            // etiqueta parada na frente da câmera: não repete
+    processar(raw, 'camera'); break;
+  }
+}
+async function acordar() { try { if (!lock) { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => { lock = null; }); } } catch (e) {} }
+async function ligarCam() {
+  if (stream) return;
+  detector = detector || await criarDetector();
+  try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false }); }
+  catch (e) { stream = null; $('camTxt').innerHTML = 'A câmera foi bloqueada aqui. Use "Digitar código" ou "Ler por foto" nos Ajustes.<br>'; const b = document.createElement('button'); b.className = 'b pri'; b.style.cssText = 'width:auto;padding:10px 18px'; b.textContent = 'Tentar de novo'; b.onclick = ligarCam; $('camTxt').append(b); return; }
+  const v = $('video'); v.srcObject = stream; v.hidden = false; $('mira').hidden = false; $('live').hidden = false; $('camTxt').hidden = true;
+  await v.play().catch(() => {});
+  acordar();
+  if (!detector) { $('camTxt').hidden = false; $('camTxt').textContent = 'Este navegador não lê código pela câmera. Use "Digitar código".'; return; }
+  const passo = async () => {
+    if (!stream) return;
+    try { if (v.readyState >= 2) { const r = await detector.detect(v); if (r.length) lidos(r.map(x => x.rawValue)); } } catch (e) {}
+    laco = setTimeout(passo, 120);
+  };
+  passo();
+}
+function desligarCam() {
+  clearTimeout(laco); if (stream) stream.getTracks().forEach(t => t.stop()); stream = null;
+  const v = $('video'); v.hidden = true; v.srcObject = null; $('mira').hidden = true; $('live').hidden = true;
+  $('camTxt').hidden = false; $('camTxt').innerHTML = 'Câmera desligada.<br>'; const b = document.createElement('button'); b.className = 'b pri'; b.style.cssText = 'width:auto;padding:10px 18px'; b.textContent = 'Ligar câmera'; b.onclick = ligarCam; $('camTxt').append(b);
+}
+$('btnCam').onclick = ligarCam;
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && stream) acordar(); });
+
+/* ---------- foto ---------- */
+$('ajFoto').onclick = () => $('foto').click();
+$('foto').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  tela('bipar');
+  detector = detector || await criarDetector();
+  if (!detector) { mostrar('err', 'Atenção', 'Sem leitor', '', 'Este navegador não lê código de foto. Digite o código.'); return; }
+  try { const img = await createImageBitmap(f); const r = await detector.detect(img); if (!r.length) { mostrar('err', 'Atenção', 'Não li', '', 'Não achei código na foto. Tente mais perto e com luz.'); bipe('err'); return; } processar(r[0].rawValue, 'foto'); }
+  catch (err) { mostrar('err', 'Atenção', 'Não li', '', 'Não consegui ler a foto.'); }
+};
+
+/* ---------- ajustes ---------- */
+function pintaCfg() { $('vel').value = cfg.vel; $('velOut').textContent = Number(cfg.vel).toFixed(2).replace('.', ',') + 'x'; $('swVozI').classList.toggle('on', cfg.voz); $('swVoz').setAttribute('aria-pressed', cfg.voz); }
+function guardaCfg() { try { localStorage.setItem(LS + '_cfg', JSON.stringify(cfg)); } catch (e) {} }
+$('vel').oninput = () => { cfg.vel = Math.round(+$('vel').value * 100) / 100; pintaCfg(); guardaCfg(); };
+$('vel').onchange = () => falar('quinze');
+$('swVoz').onclick = () => { cfg.voz = !cfg.voz; pintaCfg(); guardaCfg(); };
+$('ajRota').onclick = () => $('pdf').click();
+async function copiar(bt, box) {
+  if (!S.rota) return;
+  const feitos = S.rota.pacotes.filter(p => S.bip[idDe(p)]);
+  const sh = feitos.filter(p => (p.cod || '').startsWith('BR')).length, aj = feitos.length - sh;
+  const hoje = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+  const t = 'Terminei de bipar ' + hoje + ': ' + sh + ' Shopee · ' + aj + ' Anjun (' + feitos.length + ' de ' + S.rota.pacotes.length + ') · rota ' + S.rota.nome;
+  box.value = t; box.hidden = false;
+  try { await navigator.clipboard.writeText(t); bt.textContent = 'Copiado'; }
+  catch (e) { box.focus(); box.select(); bt.textContent = 'Selecione e copie o texto acima'; }
+  setTimeout(() => { bt.textContent = 'Copiar contagem pro Hub'; }, 3000);
+}
+$('btnCopiar').onclick = () => copiar($('btnCopiar'), $('txtCont'));
+$('btnCopiar2').onclick = () => copiar($('btnCopiar2'), $('txtCont2'));
+$('btnZerar').onclick = () => {
+  const b = $('btnZerar');
+  if (b.dataset.conf !== '1') { b.dataset.conf = '1'; b.textContent = 'Toque de novo para zerar'; setTimeout(() => { b.dataset.conf = ''; b.textContent = 'Zerar bipagem'; }, 4000); return; }
+  S.bip = {}; hist = []; salvar(); render(); pintaHist(); b.dataset.conf = ''; b.textContent = 'Zerar bipagem';
+  mostrar('vazio', 'Sequência', '–', 'Bipagem zerada', '', '');
+};
+
+/* ---------- faltam ---------- */
+let filtro = 'faltam';
+document.querySelectorAll('.chips button').forEach(b => b.onclick = () => { filtro = b.dataset.f; document.querySelectorAll('.chips button').forEach(x => x.setAttribute('aria-pressed', x === b)); lista(); });
+function lista() {
+  const L = $('lista'); L.textContent = '';
+  if (!S.rota) return;
+  const q = norm($('busca').value), qn = $('busca').value.trim();
+  let ps = S.rota.pacotes.filter(p => filtro === 'todos' || (filtro === 'faltam') === !S.bip[idDe(p)]);
+  if (q) ps = ps.filter(p => String(p.seq) === qn || norm((p.cod || '') + ' ' + p.end + ' ' + p.nota).includes(q));
+  if (!ps.length) { const d = document.createElement('div'); d.className = 'vazia'; d.textContent = q ? 'Nada encontrado com essa busca.' : filtro === 'faltam' ? 'Todos os pacotes foram bipados.' : 'Nenhum pacote aqui.'; L.append(d); return; }
+  for (const p of ps.slice(0, 200)) {
+    const feito = !!S.bip[idDe(p)];
+    const d = document.createElement('div'); d.className = 'item' + (feito ? ' feito' : '');
+    const s = document.createElement('div'); s.className = 's'; s.textContent = p.seq;
+    const t = document.createElement('div'); t.className = 't'; t.append(p.end);
+    const sm = document.createElement('small'); sm.textContent = p.cod || 'sem código no PDF'; t.append(sm);
+    const btn = document.createElement('button'); btn.textContent = feito ? 'Desfazer' : 'Bipado';
+    btn.onclick = () => {
+      if (feito) { delete S.bip[idDe(p)]; salvar(); render(); }
+      else if (p.cod) processar(p.cod, 'manual');
+      else { S.bip[idDe(p)] = Date.now(); salvar(); mostrar('ok', 'Sequência', String(p.seq), '', 'Confirmado na mão', p.end); bipe('ok'); falar(String(p.seq)); anotar(p.seq, 'ok'); render(); }
+      $('busca').value = ''; lista(); $('busca').focus();
+    };
+    d.append(s, t, btn); L.append(d);
+  }
+}
+$('busca').addEventListener('input', lista);
+
+/* ---------- PDF ---------- */
+$('btnPdf').onclick = () => { destravarSom(); $('pdf').click(); };
+$('pdf').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  tela('inicio'); $('pdfInfo').className = 'aviso'; $('pdfInfo').textContent = 'Lendo o PDF…';
+  try {
+    const doc = await window.pdfjsLib.getDocument({ data: new Uint8Array(await f.arrayBuffer()) }).promise;
+    const pags = [];
+    for (let i = 1; i <= doc.numPages; i++) { const tc = await (await doc.getPage(i)).getTextContent(); pags.push(tc.items.map(t => ({ s: t.str, x: t.transform[4], y: t.transform[5], h: t.height, w: t.width }))); }
+    const pacotes = rotaDoPdf(pags);
+    if (!pacotes.length) throw new Error('vazio');
+    const nome = f.name.replace(/\.pdf$/i, ''), mesma = S.rota && S.rota.nome === nome;
+    S = { rota: { nome, data: new Date().toISOString().slice(0, 10), pacotes }, bip: mesma ? S.bip : {} };
+    hist = []; indexar(); salvar(); render(); pintaHist();
+    const semCod = pacotes.filter(p => !p.cod).length;
+    mostrar('vazio', 'Sequência', '–', 'Rota carregada: ' + pacotes.length + ' pacotes', semCod ? semCod + ' sem código no PDF: marque esses em Faltam.' : 'Aponte para a etiqueta', '');
+    $('pdfInfo').textContent = '';
+    tela('bipar'); ligarCam();
+  } catch (err) { $('pdfInfo').className = 'aviso forte'; $('pdfInfo').textContent = 'Não consegui ler esse PDF. Confira se é o PDF exportado do Spoke.'; }
+};
+$('btnContinuar').onclick = () => { destravarSom(); tela('bipar'); ligarCam(); };
+
+/* ---------- telas ---------- */
+let telaAtual = 'inicio', antesAjustes = 'bipar';
+function tela(n) {
+  if (n === 'ajustes' && telaAtual !== 'ajustes') antesAjustes = telaAtual;
+  if ((n === 'bipar' || n === 'faltam') && !S.rota) n = 'inicio';
+  telaAtual = n;
+  ['inicio', 'bipar', 'faltam', 'ajustes'].forEach(x => $('t-' + x).hidden = x !== n);
+  if (n === 'faltam') { $('busca').value = ''; lista(); setTimeout(() => $('busca').focus(), 50); }
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('[data-ir]').forEach(b => b.onclick = () => tela(b.dataset.ir));
+$('ajVoltar').onclick = () => tela(antesAjustes === 'ajustes' ? 'bipar' : antesAjustes);
+
+function render() {
+  const tot = S.rota ? S.rota.pacotes.length : 0, n = contar(), f = tot - n;
+  $('cont').textContent = ''; $('cont').append(String(n)); const sm = document.createElement('small'); sm.textContent = ' / ' + tot; $('cont').append(sm);
+  $('faltTop').textContent = tot ? 'faltam ' + f : '';
+  $('barra').style.width = tot ? (n / tot * 100) + '%' : '0';
+  $('btnFaltam').textContent = 'Faltam ' + f;
+  $('faltTit').textContent = 'Faltam ' + f;
+  $('rotaResumo').textContent = S.rota ? 'Rota atual: ' + S.rota.nome + ' · ' + tot + ' pacotes · ' + n + ' bipados' : 'Nenhuma rota carregada.';
+  const c = $('btnContinuar'); c.hidden = !S.rota; if (S.rota) c.textContent = 'Continuar ' + S.rota.nome + ' (' + n + ' de ' + tot + ')';
+  if (telaAtual === 'faltam') lista();
+}
+indexar(); pintaCfg(); pintaHist(); render(); tela('inicio');
+</script>
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<title>Bipador de Pacotes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Estilo 2 "Claro, bom no sol" (escolha do Bruno 26/11). Uma tela por vez: Início, Bipar, Faltam, Ajustes */
+:root{
+  --bg:#F1F4F0; --panel:#FFFFFF; --line:#DCE3DA; --fg:#16201A; --muted:#5E6B62;
+  --acc:#146C43; --on-acc:#FFFFFF;
+  --ok:#1E9E5A; --on-ok:#FFFFFF; --dup:#F2B705; --on-dup:#2B1D00; --err:#D93B30; --on-err:#FFFFFF;
+  --f-num:"Barlow Condensed","Arial Narrow",system-ui,sans-serif; --f-ui:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
 html,body{height:100%}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:15px;margin:0}
 .tela{max-width:560px;margin:0 auto;min-height:100%;padding-block:12px 16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:10px}
