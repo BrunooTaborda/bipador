@@ -310,11 +310,45 @@ cod.addEventListener('input', () => {
 /* ---------- câmera contínua ---------- */
 let stream = null, detector = null, laco = null; const vistos = new Map();
 async function criarDetector() {
-  if (!('BarcodeDetector' in window)) return null;
+  if ('BarcodeDetector' in window) {
+    try {
+      const sup = await BarcodeDetector.getSupportedFormats();
+      const quero = ['code_128', 'qr_code', 'code_39', 'code_93', 'ean_13', 'itf', 'data_matrix', 'pdf417', 'codabar'].filter(f => sup.includes(f));
+      if (quero.length) return new BarcodeDetector({ formats: quero });
+    } catch (e) {}
+  }
+  return await detectorZxing();   // iPhone/Safari e outros sem leitor embutido
+}
+function carregarScript(src) {
+  return new Promise((ok, erro) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = erro; document.head.appendChild(s); });
+}
+async function detectorZxing() {
   try {
-    const sup = await BarcodeDetector.getSupportedFormats();
-    const quero = ['code_128', 'qr_code', 'code_39', 'code_93', 'ean_13', 'itf', 'data_matrix', 'pdf417', 'codabar'].filter(f => sup.includes(f));
-    return new BarcodeDetector({ formats: quero.length ? quero : undefined });
+    if (!window.ZXing) await carregarScript('https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js');
+    const Z = window.ZXing, F = Z.BarcodeFormat;
+    const leitor = new Z.MultiFormatReader();
+    const dicas = new Map();
+    dicas.set(Z.DecodeHintType.POSSIBLE_FORMATS, [F.CODE_128, F.QR_CODE, F.CODE_39, F.CODE_93, F.EAN_13, F.ITF, F.DATA_MATRIX, F.PDF_417, F.CODABAR]);
+    dicas.set(Z.DecodeHintType.TRY_HARDER, true);
+    leitor.setHints(dicas);
+    const cv = document.createElement('canvas'), cx = cv.getContext('2d', { willReadFrequently: true });
+    const ler = () => { try { return [{ rawValue: leitor.decodeWithState(new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.HTMLCanvasElementLuminanceSource(cv)))).getText() }]; } catch (e) { return []; } finally { leitor.reset(); } };
+    return {
+      async detect(src) {
+        const w = src.videoWidth || src.width, h = src.videoHeight || src.height;
+        if (!w || !h) return [];
+        const esc = Math.min(1, 1000 / Math.max(w, h));
+        cv.width = Math.round(w * esc); cv.height = Math.round(h * esc);
+        cx.drawImage(src, 0, 0, cv.width, cv.height);
+        let r = ler();
+        if (!r.length && src.videoWidth) {   // tenta de novo só no meio da imagem (onde fica a mira), maior
+          const cw = w * 0.72, ch = h * 0.56; cv.width = Math.round(Math.min(1000, cw)); cv.height = Math.round(cv.width * ch / cw);
+          cx.drawImage(src, (w - cw) / 2, (h - ch) / 2, cw, ch, 0, 0, cv.width, cv.height);
+          r = ler();
+        }
+        return r;
+      }
+    };
   } catch (e) { return null; }
 }
 function lidos(cods) {
