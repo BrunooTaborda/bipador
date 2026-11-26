@@ -153,6 +153,7 @@ input[type=text],input[type=search]{width:100%;font:500 17px var(--f-ui);padding
   <div class="topo"><button class="voltar" id="ajVoltar" aria-label="Voltar">←</button><h1>Ajustes</h1></div>
   <div class="ajuste">
     <button class="lin" id="swVoz"><span>Falar o número</span><span class="sw on" id="swVozI"></span></button>
+    <button class="lin" id="swVib"><span>Vibrar (curta = certo, 2 = repetido, longa = não achou)</span><span class="sw on" id="swVibI"></span></button>
     <div class="vel"><div><label for="vel">Velocidade da voz</label><output id="velOut" for="vel">1,45x</output></div><input type="range" id="vel" min="1" max="2" step="0.05" value="1.45"></div>
     <button class="lin" id="ajFoto"><span>Ler por foto (sem câmera)</span><span class="seta">›</span></button>
     <button class="lin" id="ajRota"><span>Trocar rota (PDF)</span><span class="seta">›</span></button>
@@ -223,7 +224,7 @@ function codigoLido(txt) {
 const $ = id => document.getElementById(id);
 const LS = 'bipador_v1';
 let S = { rota: null, bip: {} };
-let cfg = { vel: 1.45, voz: true };
+let cfg = { vel: 1.45, voz: true, vib: true };
 let hist = [];                                   // últimos lidos: {seq, tipo, ts}
 try { const v = JSON.parse(localStorage.getItem(LS) || 'null'); if (v && v.rota) S = v; } catch (e) {}
 try { const c = JSON.parse(localStorage.getItem(LS + '_cfg') || 'null'); if (c) cfg = Object.assign(cfg, c); } catch (e) {}
@@ -267,7 +268,9 @@ const SONS = {
   dup: [[880, 0, .1, 'square', .22], [880, .16, .1, 'square', .22]],
   err: [[220, 0, .12, 'triangle', .45], [220, .16, .12, 'triangle', .45], [220, .32, .12, 'triangle', .45]]
 };
+const VIB = { ok: [70], dup: [90, 90, 90], err: [450] };   // 26/11: vibração (Android; iPhone não vibra pelo site)
 function bipe(tipo) {
+  if (cfg.vib && VIB[tipo] && navigator.vibrate) try { navigator.vibrate(VIB[tipo]); } catch (e) {}
   try {
     ac = ac || new (window.AudioContext || window.webkitAudioContext)();
     if (ac.state === 'suspended') ac.resume();
@@ -280,7 +283,6 @@ function bipe(tipo) {
       o.connect(g).connect(ac.destination); o.start(t0 + t); o.stop(t0 + t + d + .03);
     });
   } catch (e) {}
-  try { navigator.vibrate && navigator.vibrate(tipo === 'ok' ? 60 : tipo === 'dup' ? [60, 80, 60] : 300); } catch (e) {}
 }
 function destravarSom() { try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); speechSynthesis.speak(new SpeechSynthesisUtterance('')); } catch (e) {} }
 let vozPt = null;
@@ -412,11 +414,12 @@ $('foto').onchange = async e => {
 };
 
 /* ---------- ajustes ---------- */
-function pintaCfg() { $('vel').value = cfg.vel; $('velOut').textContent = Number(cfg.vel).toFixed(2).replace('.', ',') + 'x'; $('swVozI').classList.toggle('on', cfg.voz); $('swVoz').setAttribute('aria-pressed', cfg.voz); }
+function pintaCfg() { $('vel').value = cfg.vel; $('velOut').textContent = Number(cfg.vel).toFixed(2).replace('.', ',') + 'x'; $('swVozI').classList.toggle('on', cfg.voz); $('swVoz').setAttribute('aria-pressed', cfg.voz); $('swVibI').classList.toggle('on', cfg.vib); $('swVib').setAttribute('aria-pressed', cfg.vib); }
 function guardaCfg() { try { localStorage.setItem(LS + '_cfg', JSON.stringify(cfg)); } catch (e) {} }
 $('vel').oninput = () => { cfg.vel = Math.round(+$('vel').value * 100) / 100; pintaCfg(); guardaCfg(); };
 $('vel').onchange = () => falar('quinze');
 $('swVoz').onclick = () => { cfg.voz = !cfg.voz; pintaCfg(); guardaCfg(); };
+$('swVib').onclick = () => { cfg.vib = !cfg.vib; pintaCfg(); guardaCfg(); if (cfg.vib && navigator.vibrate) navigator.vibrate(70); };
 $('ajRota').onclick = () => $('pdf').click();
 async function copiar(bt, box) {
   if (!S.rota) return;
