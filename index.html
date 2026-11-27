@@ -268,10 +268,10 @@ async function sync() {
   } catch (e) {}
 })();
 
-/* ---------- som e voz (escolhidos pelo Bruno 26/11: certo = Sino 4, repetido = Clássico, não encontrado = Plim) ---------- */
+/* ---------- som e voz (escolhidos pelo Bruno 26/11; certo trocado em 27/11 para Beep grave, repetido = Clássico, não encontrado = Plim) ---------- */
 let ac = null;
 const SONS = {
-  ok: [[2093, 0, .5, 'sine', .3], [5777, 0, .18, 'sine', .06], [11302, 0, .07, 'sine', .03]],
+  ok: [[1000, 0, .11, 'square', .12], [2000, 0, .11, 'sine', .08]],   // 27/11: Beep grave (nº 14 de sons_pacote_ok)
   dup: [[880, 0, .1, 'square', .22], [880, .16, .1, 'square', .22]],
   err: [[220, 0, .12, 'triangle', .45], [220, .16, .12, 'triangle', .45], [220, .32, .12, 'triangle', .45]]
 };
